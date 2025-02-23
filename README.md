@@ -1,4 +1,5 @@
 # RNAlyze
+![Untitled-1](https://github.com/user-attachments/assets/c825c035-5596-47c2-a24f-303394654d52)
 ### Overview
 **RNAlyze** is an automated and scalable pipeline designed for RNA-Seq data processing, developed by **Mohamed Elsisi** and **Mohamed Elhwary**. It streamlines the entire RNA sequencing workflow, from raw data acquisition to feature quantification, with high efficiency and flexibility.
 
