@@ -6,9 +6,9 @@ Now available on **Bioconda**, RNAlyze makes **Next-Generation Sequencing (NGS) 
 
 ### Key Features
 
-**- Multi-Stage Pipeline:** Supports three processing modes: Full, Alignment, and Alignment&Featurecount.
+**- Multi-Stage Pipeline:** Supports two processing modes: Full, and Alignment.
 
-**- Flexible Alignment:** Choose from BWA, Bowtie2, and HISAT2 for read mapping.
+**- Flexible Alignment:** Choose from BWA, Bowtie2, and HISAT2 for read mapping and genome indexing.
 
 **- Data Acquisition:** Handles both Download (via SRA) and Directory (pre-downloaded files) options.
 
@@ -38,23 +38,95 @@ Run the pipeline with the desired options:
 
 ### Command-Line Options
 
-| Option        | Description |
-|--------------|------------|
-| `-p, --pipeline` | Specify pipeline type: Full, Alignment, Alignment&Featurecount |
-| `-t, --tool` | Choose alignment tool: BWA, Bowtie2, HISAT2 |
-| `-d, --data` | Data source: Download (via SRA) or Directory (local fastq.gz files) |
-| `-s, --srr-path` | Path to `SRR_Acc_List.txt` (required for Download mode) |
-| `-D, --data-dir` | Directory containing raw sequencing files (required for Directory mode) |
-| `-y, --type` | RNA-Seq data type: SE (Single-End) or PE (Paired-End) |
-| `-r, --ref` | Reference genome format: UnindexedURL, IndexedURL, IndexedPath, UnindexedPath |
-| `-u, --ref-url` | URL for downloading the reference genome (required if UnindexedURL or IndexedURL is selected) |
-| `-R, --ref-path` | Path to the reference genome (required for local genome processing) |
-| `-T, --trim` | Enable trimming (yes or no) |
-| `-g, --gtf` | GTF annotation source: Download or Path |
-| `-G, --gtf-url` | URL for downloading the GTF file (required if Download mode is selected) |
-| `-P, --gtf-path` | Local path to the GTF annotation file (required for Path mode) |
-| `-i, --identifier` | Gene identifier attribute in the GTF file (default: `gene_id`) |
-| `-h, --help` | Show help message |
+
+| Option              | Description                                                                                     | Inputs                                                                 |
+|---------------------|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
+| `-p, --pipeline`    | Specify pipeline type: Full, Alignment                                                          | `Full`, `Alignment`                                                   |
+| `-t, --tool`        | Choose alignment tool: BWA, Bowtie2, HISAT2                                                    | `BWA`, `Bowtie2`, `HISAT2`                                            |
+| `-d, --data`        | Data source: Download (via SRA) or Directory (local fastq.gz files)                             | `Download`, `Directory`                                               |
+| `-s, --srr-path`    | Path to `SRR_Acc_List.txt` (required for Download mode)                                         | File path (e.g., `/path/to/SRR_Acc_List.txt`)                         |
+| `-D, --data-dir`    | Directory containing raw sequencing files (required for Directory mode)                        | Directory path (e.g., `/path/to/data`)                                |
+| `-y, --type`        | RNA-Seq data type: SE (Single-End) or PE (Paired-End)                                           | `SE`, `PE`                                                            |
+| `-r, --ref`         | Reference genome format: UnindexedURL, IndexedURL, IndexedPath, UnindexedPath                   | `UnindexedURL`, `IndexedURL`, `IndexedPath`, `UnindexedPath`           |
+| `-u, --ref-url`     | URL for downloading the reference genome (required if UnindexedURL or IndexedURL is selected)   | URL (e.g., `http://example.com/ref.fna`)                              |
+| `-R, --ref-path`    | Path to the reference genome (required for local genome processing)                             | File path (e.g., `/path/to/ref_genome.fna`)                           |
+| `-T, --trim`        | Enable trimming (yes or no) (default: no)                                                      | `yes`, `no`                                                           |
+| `-l, --leading`     | Trimmomatic LEADING threshold (default: 3)                                                     | Integer (e.g., `5`)                                                   |
+| `-L, --trailing`    | Trimmomatic TRAILING threshold (default: 3)                                                    | Integer (e.g., `5`)                                                   |
+| `-w, --sliding-window` | Trimmomatic SLIDINGWINDOW parameters (default: 4:25)                                        | String in format `window_size:quality_threshold` (e.g., `4:25`)       |
+| `-m, --minlen`      | Trimmomatic MINLEN threshold (default: 36)                                                     | Integer (e.g., `36`)                                                  |
+| `-a, --adapter-se`  | Adapter for Single-End data (required if --trim yes and --type SE)                              | Adapter name (e.g., `TruSeq3-SE`)                        |
+| `-A, --adapter-pe`  | Adapter for Paired-End data (required if --trim yes and --type PE)                              | Adapter name (e.g., `TruSeq3-PE`)                        |
+| `-g, --gtf`         | GTF annotation source: Download or Path                                                        | `Download`, `Path`                                                    |
+| `-G, --gtf-url`     | URL for downloading the GTF file (required if Download mode is selected)                        | URL (e.g., `http://example.com/annotation.gtf`)                       |
+| `-P, --gtf-path`    | Local path to the GTF annotation file (required for Path mode)                                  | File path (e.g., `/path/to/annotation.gtf`)                           |
+| `-i, --identifier`  | Gene identifier attribute in the GTF file (default: `gene_id`)                                 | (e.g., `gene_id`, `transcript_id`)                             |
+| `-h, --help`        | Show help message                                                                               | None                                                                  |
+
+
+
+### How The Pipelines Works
+**1. Full Pipeline**
+
+- The Full pipeline automates the entire RNA-Seq workflow, from raw data acquisition to feature quantification. Here's how it works step-by-step:
+
+*1. Data Acquisition:*
+
+- Downloads raw sequencing data via SRA or processes pre-downloaded files from a directory.
+
+*2. Quality Control:*
+
+- Runs FastQC on raw reads to generate initial quality reports.
+- Trims low-quality bases and adapters using Trimmomatic based in your parameters.
+- Re-runs FastQC on trimmed reads to ensure improved quality.
+
+*3. Reference Genome Handling:*
+
+- Downloads the reference genome from a URL if `UnindexedURL` or `IndexedURL` is specified.
+- Uses a local reference genome if `IndexedPath` or `UnindexedPath` is provided.
+- Indexes the genome if it is unindexed.
+
+*4. Alignment:*
+
+- Maps trimmed reads to the reference genome using the chosen alignment tool (BWA, Bowtie2, or HISAT2).
+- Converts SAM files to BAM format and sorts/indexes them for downstream analysis.
+
+*5. Feature Quantification:*
+
+- Uses FeatureCounts to quantify gene expression levels based on the alignment results.
+- Generates count matrices for downstream differential expression analysis.
+
+*6. Output Generation:*
+
+- Produces comprehensive output directories, including FastQC reports, alignment files, and feature count tables.
+
+**2.Alignment Pipeline**
+
+The Alignment pipeline focuses solely on mapping reads to the reference genome. It stops after generating sorted and indexed BAM files.
+
+*1. Data Acquisition:*
+
+- Downloads raw sequencing data via SRA or processes pre-downloaded files from a directory.
+
+*2. Quality Control:*
+
+- Runs FastQC on raw reads to generate initial quality reports.
+- Trims low-quality bases and adapters using Trimmomatic based on your parameters.
+
+*3. Reference Genome Handling:*
+
+- Downloads the reference genome from a URL if `UnindexedURL` or `IndexedURL` is specified.
+- Uses a local reference genome if `IndexedPath` or `UnindexedPath` is provided.
+- Indexes the genome if it is unindexed.
+
+*4. Alignment:*
+
+- Maps trimmed reads to the reference genome using the chosen alignment tool (BWA, Bowtie2, or HISAT2).
+- Converts SAM files to BAM format and sorts/indexes them.
+
+*5. Output Generation:*
+
+- Produces alignment files (SAM, BAM, sorted BAM, and index files) for further downstream analysis.
 
 ### Example Workflows
 
@@ -71,25 +143,33 @@ Run the pipeline with the desired options:
 
 ### Output Structure
 
-**1- Fastqc_Reports/** → Raw and trimmed data quality control reports
+- RNAlyze is designed to save your work in a highly organized and optimized directory structure. This ensures that all outputs are systematically stored, making it easy to locate and analyze results. Below is a detailed explanation of how the directories are created and used.
 
-**2- MultiQC_Reports/** → Combined reports summarizing quality control results
+- RNAlyze automatically creates a main working directory named `RNAlyze-<timestamp>` in your current working directory. This directory contains all the subdirectories for storing pipeline outputs. The structure is as follows:
 
-**3- Data/** → Processed raw and trimmed sequencing reads
+1. `RNAlyze-<timestamp>/`: The main working directory, named with a timestamp to ensure uniqueness.
 
-**4- Mapping/** → Alignment output files (SAM, BAM, sorted BAM, index files)
+    1.1. `Data/`: Stores raw and processed sequencing files (.fastq.gz files).
 
-**5- Annotation/** → Reference genome annotation files (GTF)
+    1.2. `Fastqc_Reports/`: Contains FastQC reports for quality control.
 
-**6- Featurecount/** → Gene expression count tables (merged & preprocessed)
+      1.2.1. `Before_Trimming/`: FastQC reports for raw data (created if trim=yes).
 
-### Performance Optimization
+     1.2.2. `After_Trimming/`: FastQC reports for trimmed data (created if trim=yes).
 
-**1- Multi-Threading:** The pipeline utilizes the maximum available CPU threads minus one for optimal performance.
+    1.3. `MultiQC_Reports/`: Contains MultiQC reports summarizing FastQC results.
 
-**2- Automatic Cleanup:** Removes unnecessary files based on the selected pipeline mode to conserve storage.
+     1.3.1. `Before_Trimming/`: MultiQC reports for raw data (created if trim=yes).
 
-**3- Error Handling:** Built-in validation and logging for missing or incorrect inputs.
+     1.3.2. `After_Trimming/`: MultiQC reports for trimmed data (created if trim=yes).
+
+    1.4. `Mapping/`: Stores alignment outputs (.sam, .bam, sorted .bam, and index files).
+
+    1.5. `Ref_Genome/`: Contains reference genome files (.fna, index files).
+
+    1.6. `Annotation/`: Stores annotation files (.gtf files).
+
+    1.7. `Featurecount/`: Contains gene expression count tables (.counts.txt, merged and preprocessed count matrices).
 
 ### Authors
 
