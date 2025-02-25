@@ -29,6 +29,14 @@ Now available on **Bioconda**, RNAlyze makes **Next-Generation Sequencing (NGS) 
 
     conda install -c bioconda rnalyze 
 
+or
+    
+    mamba install rnalyze
+
+**To test if the package installed or not:**
+
+    rnalyze -h
+    
 **- Usage:**
 
 Run the pipeline with the desired options:
