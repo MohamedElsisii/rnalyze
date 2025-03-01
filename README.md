@@ -1,6 +1,6 @@
 # RNAlyze - Bioconda
 
-### 🆕 New Version is coming 🚨 [rnalyze v1.0.1]
+### 🆕 New Version is coming soon! 🚨 [rnalyze v1.0.1]
 
 **☑️ Support for Multiple Trimming Tools**
 
