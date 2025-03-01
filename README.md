@@ -29,6 +29,8 @@
 
 Now available on **Bioconda**, RNAlyze makes **Next-Generation Sequencing (NGS) expression analysis** easier and more automated than ever. Designed with bioinformaticians and researchers in mind, RNAlyze simplifies RNA-Seq data analysis with an automated, user-friendly pipeline, eliminating the need for complex command-line operations. Whether you're new to bioinformatics or an expert looking for an efficient workflow, RNAlyze ensures that anyone can easily process RNA-Seq data with minimal effort.
 
+### 📢IMPORTANT NOTE: The pipeline only works in a conda environment with python version 3.10
+
 ### Key Features
 
 **- Multi-Stage Pipeline:** Supports two processing modes: Full, and Alignment.
