@@ -1,12 +1,11 @@
-# RNAlyze
-![Untitled-1](https://github.com/user-attachments/assets/c825c035-5596-47c2-a24f-303394654d52)
+# RNAlyze - Bioconda
 
 ### 🆕 New Version is coming 🚨 [rnalyze v1.0.1]
 
 **☑️ Support for Multiple Trimming Tools**
 
 - Added support for Cutadapt alongside Trimmomatic, providing more flexibility and customization for trimming RNA-Seq data.
-- 
+  
 **☑️ Platform-Independent CPU Core Detection**
   
 - The script now detects the number of CPU cores in a platform-independent way, supporting Linux, macOS, and Windows.
