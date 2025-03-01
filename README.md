@@ -1,5 +1,18 @@
 # RNAlyze
 ![Untitled-1](https://github.com/user-attachments/assets/c825c035-5596-47c2-a24f-303394654d52)
+
+### 🆕 New Version is coming 🚨 [rnalyze v1.0.1]
+**☑️ Support for Multiple Trimming Tools**
+- Added support for Cutadapt alongside Trimmomatic, providing more flexibility and customization for trimming RNA-Seq data.
+**☑️ Platform-Independent CPU Core Detection**
+- The script now detects the number of CPU cores in a platform-independent way, supporting Linux, macOS, and Windows.
+**☑️ Enhanced Argument Validation**
+- Introduced a `robust validate_required_args` function to validate all input arguments, ensuring the script fails early with clear error messages if any required arguments are missing or invalid.
+**☑️ Enhanced Reference Genome Handling**
+- Added validation for reference genome file extensions (e.g., .fna, .fa, .fasta).
+**☑️ Detailed Usage Documentation**
+- The `-h` menu now provides a detailed, table-formatted guide with examples for different use cases.
+- Clearer instructions for both beginners and advanced users.
 ### Overview
 **RNAlyze** is an automated and scalable pipeline designed for RNA-Seq data processing, developed by **Mohamed Elsisi** and **Mohamed Elhwary**. It streamlines the entire RNA sequencing workflow, from raw data acquisition to feature quantification, with high efficiency and flexibility.
 
@@ -13,7 +26,7 @@ Now available on **Bioconda**, RNAlyze makes **Next-Generation Sequencing (NGS) 
 
 **- Data Acquisition:** Handles both Download (via SRA) and Directory (pre-downloaded files) options.
 
-**- Trimming & Quality Control:** Uses Trimmomatic for quality trimming and FastQC/MultiQC for quality assessment.
+**- Trimming & Quality Control:** The user can now choose from Trimmomatic and **Cutadapt** 🆕​ for quality trimming  and FastQC/MultiQC for quality assessment.
 
 **- Reference Genome Handling:** Works with indexed/unindexed genomes from URLs or local paths.
 
@@ -47,6 +60,7 @@ Run the pipeline with the desired options:
 
 ### Command-Line Options
 
+**General Parameters**
 
 | Option              | Description                                                                                     | Inputs                                                                 |
 |---------------------|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
@@ -60,21 +74,38 @@ Run the pipeline with the desired options:
 | `-u, --ref-url`     | URL for downloading the reference genome (required if UnindexedURL or IndexedURL is selected)   | URL (e.g., `http://example.com/ref.fna`)                              |
 | `-R, --ref-path`    | Path to the reference genome (required for local genome processing)                             | File path (e.g., `/path/to/ref_genome.fna`)                           |
 | `-T, --trim`        | Enable trimming (yes or no) (default: no)                                                      | `yes`, `no`                                                           |
+| `-x, --trim-tool`   | Selects trimming tool (if trimming is enabled).                                                | `Trimmomatic`, `Cutadapt`                                             |
+| `-g, --gtf`         | GTF annotation source: Download or Path                                                        | `Download`, `Path`                                                    |
+| `-G, --gtf-url`     | URL for downloading the GTF file (required if Download mode is selected)                        | URL (e.g., `http://example.com/annotation.gtf`)                       |
+| `-P, --gtf-path`    | Local path to the GTF annotation file (required for Path mode)                                  | File path (e.g., `/path/to/annotation.gtf`)                           |
+| `-i, --identifier`  | Gene identifier attribute in the GTF file (default: `gene_id`)                                 | (e.g., `gene_id`, `transcript_id`)                                    |
+| `-h, --help`        | Show help message                                                                               | None                                                                  |
+
+**Trimmomatic Parameters**
+
+| Option              | Description                                                                                     | Inputs                                                                 |
+|---------------------|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
 | `-l, --leading`     | Trimmomatic LEADING threshold (default: 3)                                                     | Integer (e.g., `5`)                                                   |
 | `-L, --trailing`    | Trimmomatic TRAILING threshold (default: 3)                                                    | Integer (e.g., `5`)                                                   |
 | `-w, --sliding-window` | Trimmomatic SLIDINGWINDOW parameters (default: 4:25)                                        | String in format `window_size:quality_threshold` (e.g., `4:25`)       |
 | `-m, --minlen`      | Trimmomatic MINLEN threshold (default: 36)                                                     | Integer (e.g., `36`)                                                  |
-| `-a, --adapter-se`  | Adapter for Single-End data (required if --trim yes and --type SE)                              | Adapter name (e.g., `TruSeq3-SE`)                        |
-| `-A, --adapter-pe`  | Adapter for Paired-End data (required if --trim yes and --type PE)                              | Adapter name (e.g., `TruSeq3-PE`)                        |
-| `-g, --gtf`         | GTF annotation source: Download or Path                                                        | `Download`, `Path`                                                    |
-| `-G, --gtf-url`     | URL for downloading the GTF file (required if Download mode is selected)                        | URL (e.g., `http://example.com/annotation.gtf`)                       |
-| `-P, --gtf-path`    | Local path to the GTF annotation file (required for Path mode)                                  | File path (e.g., `/path/to/annotation.gtf`)                           |
-| `-i, --identifier`  | Gene identifier attribute in the GTF file (default: `gene_id`)                                 | (e.g., `gene_id`, `transcript_id`)                             |
-| `-h, --help`        | Show help message                                                                               | None                                                                  |
+| `-a, --adapter-se`  | Adapter for Single-End data (required if --trim yes and --type SE)                              | Adapter name (e.g., `TruSeq3-SE`)                                     |
+| `-A, --adapter-pe`  | Adapter for Paired-End data (required if --trim yes and --type PE)                              | Adapter name (e.g., `TruSeq3-PE`)                                     |
 
+**🆕​ Cutadapt Parameters**
 
+| Option              | Description                                                                                     | Inputs                                                                 |
+|---------------------|-------------------------------------------------------------------------------------------------|------------------------------------------------------------------------|
+| `-a, --adapter-se`  | Adapter sequence for Single-End data.                                                           | Adapter sequence                                                       |
+| `-A, --adapter-pe`  | Adapter sequence for Paired-End data.                                                           | Adapter sequence                                                       |
+| `-g, --front-se`    | 5' adapter sequence for Single-End data.                                                        | Adapter sequence                                                       |
+| `-G, --front-pe`    | 5' adapter sequence for Paired-End data.                                                        | Adapter sequence                                                       |
+| `-q, --quality-cutoff` | Trim bases below quality threshold.                                                          | Integer                                                                |
+| `-M, --min-read-length` | Minimum read length after trimming.                                                         | Integer                                                                |
 
 ### How The Pipelines Works
+
+
 **1. Full Pipeline**
 
 - The Full pipeline automates the entire RNA-Seq workflow, from raw data acquisition to feature quantification. Here's how it works step-by-step:
@@ -86,7 +117,7 @@ Run the pipeline with the desired options:
 *2. Quality Control:*
 
 - Runs FastQC on raw reads to generate initial quality reports.
-- Trims low-quality bases and adapters using Trimmomatic based in your parameters.
+- Trims low-quality bases and adapters using Trimmomatic or Cutadapt based in your parameters.
 - Re-runs FastQC on trimmed reads to ensure improved quality.
 
 *3. Reference Genome Handling:*
@@ -120,7 +151,7 @@ The Alignment pipeline focuses solely on mapping reads to the reference genome. 
 *2. Quality Control:*
 
 - Runs FastQC on raw reads to generate initial quality reports.
-- Trims low-quality bases and adapters using Trimmomatic based on your parameters.
+- Trims low-quality bases and adapters using Trimmomatic or Cutadapt based on your parameters.
 
 *3. Reference Genome Handling:*
 
@@ -139,16 +170,21 @@ The Alignment pipeline focuses solely on mapping reads to the reference genome. 
 
 ### Example Workflows
 
-*- Running Full Pipeline with HISAT2*
+*- Full Pipeline with Hisat2 & Trimmomatic (Single-End Data)*
 
-      rnalyze -p Full -t HISAT2 -d Directory -D /data -y PE \
-        -r IndexedPath -R /genomes/hg38 \
-        -g Path -P /annotations/gencode.gtf -i gene_id
+      rnalyze -p Full -t HISAT2 -d Download -s /path/to/SRR_Acc_List.txt -y SE -r UnindexedURL -u http://example.com/ref.fna -T yes -x Trimmomatic -a TruSeq3-SE -l 5 -f Download -F http://example.com/annotation.gtf -i gene_id
 
-*- Running Alignment Only with Bowtie2*
+*- Alignment Pipeline with BWA & Cutadapt (Paired-End Data)*
 
-      rnalyze -p Alignment -t Bowtie2 -d Download -s /path/to/SRR_Acc_List.txt -y SE \
-        -r UnindexedURL -u http://example.com/ref.fna
+      rnalyze -p Alignment -t BWA -d Directory -D /path/to/data -y PE -r IndexedPath -R /path/to/indexed_genome -T yes -x Cutadapt -a AGATCGGAAGAGC -A AGATCGGAAGAGC -q 20 -M 30
+
+*- Full Pipeline with Cutadapt (Paired-End Data)*
+
+      rnalyze -p Full -t HISAT2 -d Directory -D /path/to/data -y PE -r UnindexedPath -R /path/to/ref_genome.fna -T yes -x Cutadapt -a AGATCGGAAGAGC -A AGATCGGAAGAGC -g AGATCGGAAGAGC -G AGATCGGAAGAGC -q 20 -M 30 -f Path -P /path/to/annotation.gtf -i gene_id
+
+*- Alignment Pipeline with Cutadapt (Paired-End Data)*
+
+       rnalyze -p Alignment -t Bowtie2 -d Download -s /path/to/SRR_Acc_List.txt -y SE -r IndexedURL -u http://example.com/indexed_genome.tar.gz -T yes -x Trimmomatic -a TruSeq3-SE -l 5
 
 ### Output Structure
 
