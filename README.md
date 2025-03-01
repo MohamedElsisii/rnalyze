@@ -12,7 +12,7 @@
   
 **☑️ Enhanced Argument Validation**
 
-- Introduced a `robust validate_required_args` function to validate all input arguments, ensuring the script fails early with clear error messages if any required arguments are missing or invalid.
+- Introduced a robust `validate_required_args` function to validate all input arguments, ensuring the script fails early with clear error messages if any required arguments are missing or invalid.
   
 **☑️ Enhanced Reference Genome Handling**
 
