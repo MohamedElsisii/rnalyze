@@ -2,17 +2,29 @@
 ![Untitled-1](https://github.com/user-attachments/assets/c825c035-5596-47c2-a24f-303394654d52)
 
 ### 🆕 New Version is coming 🚨 [rnalyze v1.0.1]
+
 **☑️ Support for Multiple Trimming Tools**
+
 - Added support for Cutadapt alongside Trimmomatic, providing more flexibility and customization for trimming RNA-Seq data.
+- 
 **☑️ Platform-Independent CPU Core Detection**
+  
 - The script now detects the number of CPU cores in a platform-independent way, supporting Linux, macOS, and Windows.
+  
 **☑️ Enhanced Argument Validation**
+
 - Introduced a `robust validate_required_args` function to validate all input arguments, ensuring the script fails early with clear error messages if any required arguments are missing or invalid.
+  
 **☑️ Enhanced Reference Genome Handling**
+
 - Added validation for reference genome file extensions (e.g., .fna, .fa, .fasta).
+  
 **☑️ Detailed Usage Documentation**
+
 - The `-h` menu now provides a detailed, table-formatted guide with examples for different use cases.
+  
 - Clearer instructions for both beginners and advanced users.
+  
 ### Overview
 **RNAlyze** is an automated and scalable pipeline designed for RNA-Seq data processing, developed by **Mohamed Elsisi** and **Mohamed Elhwary**. It streamlines the entire RNA sequencing workflow, from raw data acquisition to feature quantification, with high efficiency and flexibility.
 
